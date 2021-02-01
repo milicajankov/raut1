@@ -1,122 +1,101 @@
 #include <iostream>
-#include <math.h>
-#include <cmath>
+
 using namespace std;
 
-struct Krug {
+struct Vektor{
     double x;
     double y;
-    double r;
+    double z;
 
-    //Konstruktor:                                  inicijalizaciona lista
-    Krug (double xx=0. , double yy=0., double rr=0.): x(xx), y(yy), r(rr){}
-    double obim() const {return 2*r*M_PI;}
-    double povrsina() const {return r*r*M_PI;}
-    bool overlap(const Krug &k)  const{
-         return sqrt((x- k.x)*(x - k.x) + (y - k.y)*(y - k.y)) < r + k.r ;}
+    Vektor( double xx = 0., double yy = 0., double zz=0.) : x(xx), y(yy), z(zz) {}
 
 
+    double innerProd(const Vektor &v) const {
+        return x*v.x + y*v.y + z*v.z;
+
+    }
+    Vektor crossProduct(const Vektor &v) const {
+        return Vektor(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
+    } //Poziva konstruktor sa datim vrednostima u zagradi
 };
 
-istream& operator >> (istream& in, Krug &k){
-    in >> k.x >> k.y >> k.r; // ucitava iz
-        return in ;
+double innerProd(double x1, double x2, double x3, double y1, double y2, double y3){
+     return x1*y1 + x2*y2 + x3*y3;
+}
+void crossProduct(double x1, double x2, double x3, double y1, double y2, double y3,
+                  double &z1, double &z2, double &z3){
+
+                   z1 = x2*y3 - x3*y2;
+                   z2 = x3*y1 - x1*y3;
+                   z3 = x1*y2 - x2*y1;
+}
+istream& operator>> (istream &in, Vektor  &v){
+    in >> v.x >> v.y >> v.z;
+    return in;
 }
 
-ostream& operator << (ostream &out, const Krug &k){
-    out << "Krug K[(" << k.x << "," << k.y << "), " << k.r << "]";
+ostream& operator<< (ostream &out, const Vektor &v){
+    out << "( " << v.x << " , " << v.y << " , " << v.z << " ) ";
     return out;
 }
 
-double obim(double r){
-    return 2*r*M_PI;
-}
+int main(){
+    while(true){
+   // double x1, x2, x3, y1, y2, y3;
+    int izbor;
+    int n ;
+    cout << " \nUnesite broj elemenata niza: " << endl;
+    cin >> n;
+    Vektor niz[n];
 
-double povrsina(double r){
-    return r*r*M_PI;
-}
+    for (auto i = 0 ; i < n; ++i){
+        cout << "Unesite koordinate " << i+1 << " vektora.";
+        cin >> niz[i];
+    }
+    cout << "Uneli ste : " << endl;
+    for( auto v: niz )
+        cout << v <<endl;
 
-bool overlap(double x1, double y1, double r1, double x2, double y2, double r2){
-    return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2)) < r1 + r2 ;
-}
 
-int main() {
-    char izbor;
-    do {
-       // double x1, x2, y1, y2, r1, r2;
+    /*//Vektor v1, v2;
+    cout << "Program za rad sa vektorima." << endl;
+    cout << "Unesite koordinate prvog vektora. " << endl;
+    cin >> niz;
 
-        int meni;
-        Krug k1, k2;
+    cout << "Unesite koordinate drugog vektora. " << endl;
+    cin >> v2;*/
 
-        cout << "Program za rad sa krugovima" << endl << endl;
-        cout << "Unesite krug K1 " << endl;
-        cout << "Unesite x i y koordinatu centra kruga, kao i njegov poluprecnik: x1, y1, r1: ";
-        cin >> k1;
+    cout << " Izaberite opciju:" << endl;
+    cout << " 1. Unutrasnji proizvod " << endl;
+    cout << " 2. Vektorski proizvod " << endl;
+    cout << " 3. Kraj programa" << endl;
+    cout << "Izbor:";
+    cin >> izbor;
 
-      //  Krug k1(x1, y1, r1);
-
-        cout << "Unesite krug K2 " << endl;
-        cout << "Unesite x i y koordinatu centra kruga, kao i njegov poluprecnik: x2, y2, r2: ";
-        cin >> k2;
-
-      //  Krug k2(x2, y2, r2);
-
-        cout << endl ;
-
-       /* cout << "Krug K[(" << x1 << "," << y1 << "), " << r1 << "]" << endl;
-        cout << "Obim: " << 2*r1*M_PI << endl;
-        cout << "Povrsina: " << r1*r1*M_PI << endl;
-
-        cout << endl ;
-
-        cout << "Krug K[(" << x2 << "," << y2 << "), "<< r2 << "]" << endl;
-        cout << "Obim: " << 2*r2*r2*M_PI << endl;
-        cout << "Povrsina: " << r2*r2*M_PI << endl;*/
-
-        cout << "Izaberite opciju: " << endl;
-        cout << "1. Povrsina" << endl;
-        cout << "2. Obim" << endl;
-        cout << "3. Preklapanje " ;
-        cin >> meni;
-
-        switch(meni){
+        switch(izbor){
             case 1:
-                {
-                cout << "Krug " << k1 << endl;
-                cout << "Povrsina: " << k1.povrsina() << endl;
-
-                cout << endl;
-
-                cout << "Krug" << k2 << endl;
-                cout << "Povrsina: " << k2.povrsina() << endl;
-                }
+                cout << "Unutrasnji proizvod: " << endl;
+                for(auto i =0; i<n-1; ++i){
+                    cout << niz[i] << " * " << niz[i+1] << " = " << niz[i].innerProd(niz[i+1]);
+                    }
                 break;
             case 2:
                 {
-                cout << "Krug" << k1 << endl;
-                cout << "Obim: " << k1.obim() << endl;
-
-                cout <<endl;
-
-                cout << "Krug" << k2 << endl;
-                cout << "Obim: " << k2.obim() << endl;
+                //double z1, z2, z3;
+               // crossProduct(x1,x2,x3,y1,y2,y3,z1,z2,z3);
+                cout << " Vektorski proizvod : V( " ;
+                for(auto i=0;i<n-1; ++i){
+                    cout << niz[i] << " x " << niz[i+1] << " = " << niz[i].crossProduct(niz[i+1]);
+                    }
                 }
                 break;
             case 3:
-            {
-                cout << "Preklapanje krugova :" << k1 << " i " << k2 <<((k1.overlap(k2))?(": DA"):(": NE")) << endl;
-                break;
+                cout << "Kraj programa." << endl;
+                return 0;
+                //break; Ne mora break, ima return.
             default:
-            cout << "Nepostojeca opcija, probati ponovo." << endl;
+                cout << "Izabrana opcija ne postoji." << endl;
             }
-        }
-        cout <<  endl << endl;
-
-        cout << "Da li zelite ponovo da unesete krug? (d/n)";
-        cin >> izbor;
-        } while(izbor == 'd' || izbor == 'D');
-
-
-        cout << "Kraj programa" << endl;
+    }
     return 0;
 }
